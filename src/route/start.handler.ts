@@ -4,9 +4,9 @@ import {sendSuccess} from "@/utils/response-handler.ts";
 import {HTTPException} from "hono/http-exception";
 import {withSessionId} from "@/middleware/with-sessionid.ts";
 
-const start_handler = new LocalHono()
+const startHandler = new LocalHono()
 
-start_handler.post("", withSessionId(), async (c) => {
+startHandler.post("", withSessionId(), async (c) => {
     const sessionId = c.get("sessionId")
     const result = await whatsappClientManage().start(sessionId)
     switch (result) {
@@ -25,4 +25,4 @@ start_handler.post("", withSessionId(), async (c) => {
     }
 })
 
-export default start_handler
+export default startHandler

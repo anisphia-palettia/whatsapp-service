@@ -3,6 +3,7 @@ import {logger} from "@/lib/logger.ts";
 import {WhatsAppClients} from "@/lib/whatsapp/data.ts";
 import {whatsappRedisService} from "@/service/whatsapp.redis.service.ts";
 import {HTTPException} from "hono/http-exception";
+import qrHandler from "@/route/qr.handler.ts";
 
 export function whatsappClientManage() {
     return {
@@ -69,32 +70,42 @@ export function whatsappClientManage() {
                     }
                 })
 
-                client.on("ready", async () => {
+                client.on("ready", () => {
                     WhatsAppClients.set(sessionId, client)
                     logger.info(`Client ${sessionId} is ready!`)
                     clearTimeout(hardTimeout);
-                    await whatsappRedisService.deleteQr(sessionId)
+                    whatsappRedisService.deleteQr(sessionId)
                     resolve("ready");
                 })
 
                 client.on("auth_failure", () => {
-                    WhatsAppClients.delete(sessionId)
+                    WhatsAppClients.delete(sessionId);
+                    whatsappRedisService.deleteQr(sessionId);
+                    logger.error(`Client ${sessionId} authentication failed!`);
                     clearTimeout(hardTimeout);
-                    logger.error(`Client ${sessionId} authentication failed!`)
+                    client.destroy();
+                    if (!isResolved) {
+                        isResolved = true;
+                        reject(new Error("Authentication failed"));
+                    }
                 })
 
-                client.on("disconnected", async (err) => {
+                client.on("disconnected", (err) => {
                     WhatsAppClients.delete(sessionId)
                     clearTimeout(hardTimeout);
+                    client.destroy();
                     logger.warn(`Client ${sessionId} is disconnected!`)
                 })
 
-                client.initialize().catch(async (err) => {
-                    logger.error(`Client init failed for ${sessionId}`, err);
+                client.initialize().catch( (err) => {
+                    WhatsAppClients.delete(sessionId);
+                    whatsappRedisService.deleteQr(sessionId);
+                    logger.warn(`Client ${sessionId} is disconnected! Reason: ${err}`);
+
                     clearTimeout(hardTimeout);
                     if (!isResolved) {
                         isResolved = true;
-                        reject(new Error("Failed to initialize client"));
+                        reject(new Error("Client disconnected before ready"));
                     }
                 });
             })

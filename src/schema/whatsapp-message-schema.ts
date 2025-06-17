@@ -4,7 +4,7 @@ import {imageValidator} from "@/schema/image-validator.ts";
 export const whatsappMessageSchema = {
     text: z.object({
         text: z.string().min(1),
-        recipient: z.string().min(1)
+        recipient: z.string().min(1),
     }),
     withImage: z.object({
         recipient: z.string().min(1),

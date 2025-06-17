@@ -1,10 +1,10 @@
 import {LocalHono} from "@/types/LocalHono.ts";
 import errorHandler from "@/middleware/error-handler.ts";
-import r_service from "@/route/r_service.ts";
+import r_index from "@/route/_r_index.ts";
 
 const app = new LocalHono()
 
-app.route("/service", r_service)
+app.route("", r_index)
 
 app.onError(errorHandler)
 
