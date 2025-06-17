@@ -7,7 +7,7 @@
     "@types/bun": "latest"
   },
   "scripts": {
-    "start": "bun src/server.ts"
+    "start": "bun ./src/server.ts"
   },
   "peerDependencies": {
     "typescript": "^5"

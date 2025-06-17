@@ -21,5 +21,9 @@ export const WhatsAppClients = {
 
     list(): string[] {
         return Array.from(clientMap.keys());
+    },
+
+    entries(): [string, Client][] {
+        return Array.from(clientMap.entries());
     }
 };
