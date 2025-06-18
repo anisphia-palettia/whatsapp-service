@@ -1,6 +1,7 @@
 import Redis from "ioredis";
+import {appConfig} from "@/config/config.ts";
 
 export const redis = new Redis({
-    host: "127.0.0.1",
-    port: 6379,
+    host: appConfig.redisHost,
+    port: Number(appConfig.redisPort),
 });

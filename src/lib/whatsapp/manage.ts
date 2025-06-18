@@ -1,11 +1,10 @@
 import {Client, LocalAuth} from "whatsapp-web.js";
 import {logger} from "@/lib/logger.ts";
 import {WhatsAppClients} from "@/lib/whatsapp/data.ts";
-import {whatsappRedisService} from "@/service/whatsapp.redis.service.ts";
+import {whatsappQrRedisService} from "@/service/whatsapp-qr-redis.service.ts";
 import {HTTPException} from "hono/http-exception";
-import qrHandler from "@/route/qr.handler.ts";
 
-export function whatsappClientManage() {
+export function WhatsappClientManage() {
     return {
         getClientOrThrow(sessionId: string): Client {
             const client = WhatsAppClients.get(sessionId);
@@ -23,7 +22,7 @@ export function whatsappClientManage() {
         },
 
         async ensureQrNotGenerated(sessionId: string) {
-            const qrRedis = await whatsappRedisService.getQr(sessionId);
+            const qrRedis = await whatsappQrRedisService.getQr(sessionId);
             if (qrRedis) {
                 throw new HTTPException(400, {message: "QR already generated, please scan"});
             }
@@ -53,7 +52,7 @@ export function whatsappClientManage() {
                 const hardTimeout = setTimeout(async () => {
                     logger.warn(`Session ${sessionId} expired after 3 minutes`);
                     await client.destroy();
-                    await whatsappRedisService.deleteQr(sessionId);
+                    await whatsappQrRedisService.deleteQr(sessionId);
                     if (!isResolved) {
                         isResolved = true;
                         reject(new Error("QR not scanned in time, session destroyed"));
@@ -62,7 +61,7 @@ export function whatsappClientManage() {
 
                 client.on("qr", async (qr) => {
                     logger.info(`Client ${sessionId} QR code is ready!`)
-                    await whatsappRedisService.setQr(sessionId, qr)
+                    await whatsappQrRedisService.setQr(sessionId, qr)
 
                     if (!isResolved) {
                         isResolved = true;
@@ -74,13 +73,13 @@ export function whatsappClientManage() {
                     WhatsAppClients.set(sessionId, client)
                     logger.info(`Client ${sessionId} is ready!`)
                     clearTimeout(hardTimeout);
-                    whatsappRedisService.deleteQr(sessionId)
+                    whatsappQrRedisService.deleteQr(sessionId)
                     resolve("ready");
                 })
 
                 client.on("auth_failure", () => {
                     WhatsAppClients.delete(sessionId);
-                    whatsappRedisService.deleteQr(sessionId);
+                    whatsappQrRedisService.deleteQr(sessionId);
                     logger.error(`Client ${sessionId} authentication failed!`);
                     clearTimeout(hardTimeout);
                     client.destroy();
@@ -94,12 +93,13 @@ export function whatsappClientManage() {
                     WhatsAppClients.delete(sessionId)
                     clearTimeout(hardTimeout);
                     client.destroy();
+                    this.start(sessionId);
                     logger.warn(`Client ${sessionId} is disconnected!`)
                 })
 
                 client.initialize().catch( (err) => {
                     WhatsAppClients.delete(sessionId);
-                    whatsappRedisService.deleteQr(sessionId);
+                    whatsappQrRedisService.deleteQr(sessionId);
                     logger.warn(`Client ${sessionId} is disconnected! Reason: ${err}`);
 
                     clearTimeout(hardTimeout);

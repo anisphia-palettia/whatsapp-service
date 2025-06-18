@@ -10,8 +10,19 @@ export const whatsappMessageSchema = {
         recipient: z.string().min(1),
         caption: z.string().optional(),
         image: imageValidator,
+    }),
+    broadcast: z.object({
+        recipients: z.array(z.string()),
+        text: z.string().min(1),
+    }),
+    broadcastWithImage: z.object({
+        recipients: z.array(z.string()),
+        caption: z.string().optional(),
+        image: imageValidator,
     })
 }
 
 export type WhatsappMessageTextInput = z.infer<typeof whatsappMessageSchema.text>
-export  type WhatsAppMessageWithImageInput = z.infer<typeof whatsappMessageSchema.withImage>
+export type WhatsAppMessageWithImageInput = z.infer<typeof whatsappMessageSchema.withImage>
+export type WhatsAppMessageBroadcastInput = z.infer<typeof whatsappMessageSchema.broadcast>
+export type WhatsAppBroadcastWithImageInput = z.infer<typeof whatsappMessageSchema.broadcastWithImage>

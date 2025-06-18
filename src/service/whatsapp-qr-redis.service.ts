@@ -1,7 +1,7 @@
 import {redis} from "@/lib/redis";
 import {HTTPException} from "hono/http-exception";
 
-export const whatsappRedisService = {
+export const whatsappQrRedisService = {
     async setQr(sessionId: string, qr: string) {
         await redis.set(`qr:${sessionId}`, qr, "EX", 60 * 5);
     },

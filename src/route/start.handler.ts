@@ -1,5 +1,5 @@
 import {LocalHono} from "@/types/LocalHono.ts";
-import {whatsappClientManage} from "@/lib/whatsapp/manage.ts";
+import {WhatsappClientManage} from "@/lib/whatsapp/manage.ts";
 import {sendSuccess} from "@/utils/response-handler.ts";
 import {HTTPException} from "hono/http-exception";
 import {withSessionId} from "@/middleware/with-sessionid.ts";
@@ -8,7 +8,7 @@ const startHandler = new LocalHono()
 
 startHandler.post("", withSessionId(), async (c) => {
     const sessionId = c.get("sessionId")
-    const result = await whatsappClientManage().start(sessionId)
+    const result = await WhatsappClientManage().start(sessionId)
     switch (result) {
         case "qr" :
             return sendSuccess(c, {
