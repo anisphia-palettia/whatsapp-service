@@ -21,5 +21,8 @@
     "whatsapp-web.js": "^1.30.0",
     "winston": "^3.17.0",
     "zod": "^3.25.64"
+  },
+  "patchedDependencies": {
+    "whatsapp-web.js@1.30.0": "patches/whatsapp-web.js@1.30.0.patch"
   }
 }

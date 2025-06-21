@@ -3,7 +3,7 @@ import {logger} from "@/lib/logger.ts";
 import {WhatsAppClients} from "@/lib/whatsapp/data.ts";
 import {whatsappQrRedisService} from "@/service/whatsapp-qr-redis.service.ts";
 import {HTTPException} from "hono/http-exception";
-import fs from "fs/promises";
+import fs from 'fs';
 import path from "path";
 
 export function WhatsappClientManage() {
@@ -30,24 +30,6 @@ export function WhatsappClientManage() {
             }
         },
 
-        async safeDestroyClientAndRemoveFolder(sessionId: string, client: Client) {
-            try {
-                await client.destroy();
-            } catch (err) {
-                logger.error(`Failed to destroy client (${sessionId}):`, err);
-            }
-
-            try {
-                const folderPath = path.join(process.cwd(), "session", `session-${sessionId}`);
-                await fs.rm(folderPath, {recursive: true, force: true});
-                logger.info(`Deleted session folder: ${folderPath}`);
-            } catch (err) {
-                logger.error(`Failed to delete session folder for ${sessionId}:`, err);
-            }
-
-            WhatsAppClients.delete(sessionId);
-        },
-
         async start(sessionId: string): Promise<"qr" | "ready"> {
             this.ensureClientNotRunning(sessionId);
             await this.ensureQrNotGenerated(sessionId);
@@ -58,7 +40,6 @@ export function WhatsappClientManage() {
                     clientId: sessionId,
                     dataPath: "./session"
                 }),
-                restartOnAuthFail: true,
                 puppeteer: {
                     handleSIGINT: false,
                     args: [
@@ -111,33 +92,24 @@ export function WhatsappClientManage() {
                     }
                 })
 
-                client.on("disconnected", (err) => {
-                    // client.destroy()
-                    console.log(err)
+                client.on("disconnected", (reason) => {
+                    client.destroy()
+                    setTimeout(() => {
+                        const folderPath = path.join(process.cwd(), 'session', `session-${sessionId}`);
+                        logger.info(`Deleting session folder: ${folderPath}`);
+
+                        fs.rm(folderPath, {recursive: true, force: true}, (err) => {
+                            if (err) {
+                                logger.error(`Error deleting folder: ${err.message}`);
+                            } else {
+                                logger.info('Folder deleted successfully');
+                            }
+                        });
+                    }, 2000)
                     WhatsAppClients.delete(sessionId)
                     clearTimeout(hardTimeout);
-                    client.initialize()
                     logger.warn(`Client ${sessionId} is disconnected!`)
                 })
-
-                process.on('unhandledRejection', (reason) => {
-                        const reasonMsg = typeof reason === "string" ? reason : (reason as Error).message;
-
-                        if (reasonMsg.includes("Protocol Error:") || reasonMsg.includes("Target closed.")) {
-                            logger.warn(`UnhandledRejection triggered cleanup for session ${sessionId}: ${reasonMsg}`);
-
-                            this.safeDestroyClientAndRemoveFolder(sessionId, client);
-                        }
-                    }
-                )
-
-                process.on("uncaughtException", (error) => {
-                    if (error.message.includes("Protocol Error:") || error.message.includes("Target closed.")) {
-                        logger.warn(`UncaughtException triggered cleanup for session ${sessionId}: ${error.message}`);
-                        this.safeDestroyClientAndRemoveFolder(sessionId, client);
-                    }
-                });
-
 
                 client.initialize().catch((err) => {
                     WhatsAppClients.delete(sessionId);

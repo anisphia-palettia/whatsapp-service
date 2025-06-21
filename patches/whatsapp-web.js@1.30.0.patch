@@ -1,0 +1,23 @@
+diff --git a/src/authStrategies/LocalAuth.js b/src/authStrategies/LocalAuth.js
+index ca85bde406b4bafd67908068fb84086e51367477..6adbdabbe033ededda81a0d5aace7ff6f3535d21 100644
+--- a/src/authStrategies/LocalAuth.js
++++ b/src/authStrategies/LocalAuth.js
+@@ -45,12 +45,12 @@ class LocalAuth extends BaseAuthStrategy {
+     }
+ 
+     async logout() {
+-        if (this.userDataDir) {
+-            await fs.promises.rm(this.userDataDir, { recursive: true, force: true, maxRetries: this.rmMaxRetries })
+-                .catch((e) => {
+-                    throw new Error(e);
+-                });
+-        }
++        // if (this.userDataDir) {
++        //     await fs.promises.rm(this.userDataDir, { recursive: true, force: true, maxRetries: this.rmMaxRetries })
++        //         .catch((e) => {
++        //             throw new Error(e);
++        //         });
++        // }
+     }
+ 
+ }

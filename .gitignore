@@ -1,5 +1,6 @@
 session
 .wwebjs_cache
+public
 
 # dependencies (bun install)
 node_modules
