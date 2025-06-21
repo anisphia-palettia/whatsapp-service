@@ -120,23 +120,23 @@ export function WhatsappClientManage() {
                     logger.warn(`Client ${sessionId} is disconnected!`)
                 })
 
-                // process.on('unhandledRejection', (reason) => {
-                //         const reasonMsg = typeof reason === "string" ? reason : (reason as Error).message;
-                //
-                //         if (reasonMsg.includes("Protocol Error:") || reasonMsg.includes("Target closed.")) {
-                //             logger.warn(`UnhandledRejection triggered cleanup for session ${sessionId}: ${reasonMsg}`);
-                //
-                //             this.safeDestroyClientAndRemoveFolder(sessionId, client);
-                //         }
-                //     }
-                // )
-                //
-                // process.on("uncaughtException", (error) => {
-                //     if (error.message.includes("Protocol Error:") || error.message.includes("Target closed.")) {
-                //         logger.warn(`UncaughtException triggered cleanup for session ${sessionId}: ${error.message}`);
-                //         this.safeDestroyClientAndRemoveFolder(sessionId, client);
-                //     }
-                // });
+                process.on('unhandledRejection', (reason) => {
+                        const reasonMsg = typeof reason === "string" ? reason : (reason as Error).message;
+
+                        if (reasonMsg.includes("Protocol Error:") || reasonMsg.includes("Target closed.")) {
+                            logger.warn(`UnhandledRejection triggered cleanup for session ${sessionId}: ${reasonMsg}`);
+
+                            this.safeDestroyClientAndRemoveFolder(sessionId, client);
+                        }
+                    }
+                )
+
+                process.on("uncaughtException", (error) => {
+                    if (error.message.includes("Protocol Error:") || error.message.includes("Target closed.")) {
+                        logger.warn(`UncaughtException triggered cleanup for session ${sessionId}: ${error.message}`);
+                        this.safeDestroyClientAndRemoveFolder(sessionId, client);
+                    }
+                });
 
 
                 client.initialize().catch((err) => {
