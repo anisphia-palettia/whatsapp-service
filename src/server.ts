@@ -5,6 +5,7 @@ import {logger} from "@/lib/logger";
 import {deleteAllQrFromRedis} from "@/utils/delete-all-qr-from-redis";
 import {destroyAllWhatsappSockets} from "@/utils/destroy-all-whatsapp-client";
 import {serve} from "@hono/node-server";
+import {WhatsappSocketManage} from "@/lib/whatsapp/manage.ts";
 
 async function shutdown(signal: string) {
     logger.info(`${signal} received, cleaning up...`);
@@ -24,11 +25,12 @@ async function shutdown(signal: string) {
 }
 
 
-function main() {
+async function main() {
     serve({
         port: appConfig.port,
         fetch: app.fetch,
     });
+    await WhatsappSocketManage().start("1")
     logger.info(`Server is running on port ${appConfig.port}`);
 
     ["SIGINT", "SIGTERM"].forEach((signal) => {

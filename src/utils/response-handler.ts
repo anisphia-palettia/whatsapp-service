@@ -8,10 +8,12 @@ type ApiResponseSuccess<T = any> = {
     message: string;
     statusCode?: ContentfulStatusCode
     token?: string;
+    origin: string;
 };
 
 type ApiResponseError = {
     success: boolean;
+    origin: string;
     statusCode?: ContentfulStatusCode,
     error: {
         message: string;
@@ -37,8 +39,9 @@ export function sendSuccess<T = any>(
     return c.json<ApiResponseSuccess>(
         {
             success: true,
+            origin: "WHATSAPP SERVICE",
             statusCode: status,
-            message: `[WHATSAPP SERVICE] ${message}`,
+            message: `${message}`,
             data: data,
             token: token,
         },
@@ -64,6 +67,7 @@ export function sendError(
         {
             success: false,
             statusCode: status,
+            origin: "WHATSAPP SERVICE",
             error: {
                 message: message,
                 details: detail,

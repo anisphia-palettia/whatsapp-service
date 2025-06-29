@@ -1,7 +1,7 @@
 import { WhatsappSocketManage } from "@/lib/whatsapp/manage";
 import { HTTPException } from "hono/http-exception";
-import { whatsappGroupRedisService } from "@/service/whatsapp-group-redis.service";
-import type { IWhatsappGroupInfo } from "@/types/Whatsapp";
+import { whatsappGroupRedisService } from "@/service/redis/whatsapp-group-redis.service.ts";
+import type { IWhatsappGroupInfo } from "@/types/IWhatsapp.ts";
 import type { WASocket } from "baileys";
 
 export function WhatsappSocketGroup(sessionId: string) {

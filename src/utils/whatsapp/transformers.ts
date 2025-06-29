@@ -1,0 +1,1 @@
+export {mapBaileysChatToModel} from "@/utils/whatsapp/helpers/mapBaileysChatToModel.ts";

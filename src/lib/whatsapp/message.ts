@@ -4,7 +4,7 @@ import type {
     WhatsAppMessageBroadcastInput,
     WhatsappMessageTextInput,
     WhatsAppMessageWithImageInput,
-} from "@/schema/whatsapp-message-schema";
+} from "@/schema/whatsapp-message.schema.ts";
 import { saveMedia } from "@/utils/save-media";
 import { readFile } from "fs/promises";
 import mime from "mime";

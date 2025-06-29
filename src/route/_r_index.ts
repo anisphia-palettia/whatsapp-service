@@ -4,6 +4,7 @@ import qrHandler from "@/route/qr.handler";
 import r_message from "@/route/message/_r_message";
 import groupsHandler from "@/route/groups.handler";
 import r_chats from "@/route/chats/_r_chats.ts";
+import createHandler from "@/route/create.handler.ts";
 
 const r_index = new LocalHono()
 
@@ -13,5 +14,6 @@ r_index.route("/chats", r_chats)
 r_index.route("/qr", qrHandler)
 r_index.route("/start", startHandler)
 r_index.route("/groups", groupsHandler)
+r_index.route("/create", createHandler)
 
 export default r_index

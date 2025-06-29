@@ -5,16 +5,17 @@ import makeWASocket, {
     DisconnectReason,
     useMultiFileAuthState,
     fetchLatestBaileysVersion,
-    type WASocket
+    type WASocket, chatModificationToAppPatch
 } from 'baileys'
 import fs from 'fs/promises';
 import path from 'path';
 import {logger} from "@/lib/logger";
-import {whatsappQrRedisService} from "@/service/whatsapp-qr-redis.service";
+import {whatsappQrRedisService} from "@/service/redis/whatsapp-qr-redis.service.ts";
 import {HTTPException} from "hono/http-exception";
 import {WhatsAppSockets} from "@/lib/whatsapp/data";
 import pino from "pino";
-import {makeInMemoryStore} from '@rodrigogs/baileys-store';
+import {WsWhatsappHandler} from "@/utils/whatsapp/ws-whatsapp-handler.ts";
+import {WhatsappSessionService} from "@/service/database/whatsapp-session.service.ts";
 
 export function WhatsappSocketManage() {
     return {
@@ -47,28 +48,13 @@ export function WhatsappSocketManage() {
             const {state, saveCreds} = await useMultiFileAuthState(sessionDir);
             const {version} = await fetchLatestBaileysVersion();
 
-            const store = makeInMemoryStore({});
-
-
             const socket = makeWASocket({
                 version,
                 auth: state,
                 logger: pino({level: 'silent'})
             });
 
-            store.bind(socket.ev);
-
-            setInterval(() => {
-                store.writeToFile(`./session/${sessionId}/baileys_store.json`);
-            }, 10_000);
-
-            setTimeout(() => {
-                console.log('🧠 STORE snapshot:', {
-                    chats: store.chats.length,
-                    contacts: Object.keys(store.contacts).length,
-                    messages: Object.keys(store.messages).length
-                });
-            }, 15_000);
+            const wsWhatsappHandler = WsWhatsappHandler(socket)
 
             WhatsAppSockets.set(sessionId, socket);
 
@@ -88,6 +74,8 @@ export function WhatsappSocketManage() {
 
                 socket.ev.on('creds.update', saveCreds);
 
+                wsWhatsappHandler.messagingHistorySet()
+
                 socket.ev.on('connection.update', async (update) => {
                     const {connection, lastDisconnect, qr} = update;
 
@@ -103,6 +91,7 @@ export function WhatsappSocketManage() {
                     if (connection === 'open') {
                         logger.info(`Socket ${sessionId} is ready!`);
                         clearTimeout(hardTimeout);
+                        await WhatsappSessionService.update(sessionId, {status: "CONNECTED"})
                         await whatsappQrRedisService.deleteQr(sessionId);
                         if (!isResolved) {
                             isResolved = true;
@@ -112,6 +101,7 @@ export function WhatsappSocketManage() {
 
                     if (connection === 'close') {
                         const statusCode = (lastDisconnect?.error as Boom)?.output?.statusCode;
+                        await WhatsappSessionService.update(sessionId, {status: "DISCONNECTED"})
 
                         if (timedOut) {
                             return;
