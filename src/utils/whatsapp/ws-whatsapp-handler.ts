@@ -1,11 +1,18 @@
 import {WASocket} from "baileys";
-import {mapBaileysChatToModel} from "@/utils/whatsapp/transformers.ts";
+import {mapBaileysChatToWhatsappChat} from "@/utils/whatsapp/transformers.ts";
+import {WhatsappChatService} from "@/service/database/whatsapp-chat.service.ts";
 
 export function WsWhatsappHandler(socket: WASocket) {
     return {
-        async messagingHistorySet() {
+        async messagingHistorySet(sessionId: string): Promise<void> {
             socket.ev.on("messaging-history.set", ({chats, messages, contacts}) => {
-                console.log(mapBaileysChatToModel(chats, contacts));
+                chats.map(async (chat) => {
+                    const data = {
+                        ...mapBaileysChatToWhatsappChat(chat, contacts),
+                        sessionId
+                    }
+                    await WhatsappChatService.create(data)
+                })
             })
         }
     }

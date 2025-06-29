@@ -1,4 +1,4 @@
-import {SessionStatus} from "@/generated";
+import {SessionStatus} from "@generated/index";
 
 export interface IWhatsappGroupInfo {
     id: string;
@@ -11,7 +11,6 @@ export interface IWhatsappSessionUpdate {
 }
 
 export interface IWhatsappChatCreate {
-    sessionId: string;
     chatId: string;
     name: string;
     isGroup: boolean;

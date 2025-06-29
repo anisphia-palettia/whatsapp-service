@@ -27,11 +27,11 @@ async function shutdown(signal: string) {
 
 async function main() {
     serve({
-        port: appConfig.port,
+        port: appConfig.appPort,
         fetch: app.fetch,
     });
-    await WhatsappSocketManage().start("1")
-    logger.info(`Server is running on port ${appConfig.port}`);
+    await WhatsappSocketManage().start("927f09a2-f902-4043-b80d-4ad388a0ba43")
+    logger.info(`Server is running on port ${appConfig.appPort}`);
 
     ["SIGINT", "SIGTERM"].forEach((signal) => {
         process.on(signal, () => shutdown(signal));

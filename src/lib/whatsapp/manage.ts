@@ -5,7 +5,7 @@ import makeWASocket, {
     DisconnectReason,
     useMultiFileAuthState,
     fetchLatestBaileysVersion,
-    type WASocket, chatModificationToAppPatch
+    type WASocket
 } from 'baileys'
 import fs from 'fs/promises';
 import path from 'path';
@@ -74,7 +74,7 @@ export function WhatsappSocketManage() {
 
                 socket.ev.on('creds.update', saveCreds);
 
-                wsWhatsappHandler.messagingHistorySet()
+                wsWhatsappHandler.messagingHistorySet(sessionId);
 
                 socket.ev.on('connection.update', async (update) => {
                     const {connection, lastDisconnect, qr} = update;

@@ -2,7 +2,7 @@ session
 .wwebjs_cache
 public
 
-./src/generated
+generated
 
 # dependencies (bun install)
 node_modules
