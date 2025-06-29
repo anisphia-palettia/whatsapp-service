@@ -11,6 +11,7 @@ export interface IWhatsappSessionUpdate {
 }
 
 export interface IWhatsappChatCreate {
+    sessionId: string;
     chatId: string;
     name: string;
     isGroup: boolean;
@@ -27,10 +28,10 @@ export interface IWhatsappMessageCreate {
     chatId: string;
     messageId: string;
     fromMe: boolean;
-    senderId?: string;
-    messageType?: string;
-    text?: string;
-    caption?: string;
-    mediaPath?: string;
+    senderId?: string | null;
+    messageType?: string | null;
+    text?: string | null;
+    caption?: string | null;
+    mediaPath?: string | null;
     timestamp: bigint;
 }

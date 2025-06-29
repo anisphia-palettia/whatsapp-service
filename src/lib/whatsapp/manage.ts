@@ -16,6 +16,8 @@ import {WhatsAppSockets} from "@/lib/whatsapp/data";
 import pino from "pino";
 import {WsWhatsappHandler} from "@/utils/whatsapp/ws-whatsapp-handler.ts";
 import {WhatsappSessionService} from "@/service/database/whatsapp-session.service.ts";
+import {WhatsappChatService} from "@/service/database/whatsapp-chat.service.ts";
+import {WhatsappMessageService} from "@/service/database/whatsapp-message.service.ts";
 
 export function WhatsappSocketManage() {
     return {
@@ -91,7 +93,6 @@ export function WhatsappSocketManage() {
                     if (connection === 'open') {
                         logger.info(`Socket ${sessionId} is ready!`);
                         clearTimeout(hardTimeout);
-                        await WhatsappSessionService.update(sessionId, {status: "CONNECTED"})
                         await whatsappQrRedisService.deleteQr(sessionId);
                         if (!isResolved) {
                             isResolved = true;
@@ -101,7 +102,6 @@ export function WhatsappSocketManage() {
 
                     if (connection === 'close') {
                         const statusCode = (lastDisconnect?.error as Boom)?.output?.statusCode;
-                        await WhatsappSessionService.update(sessionId, {status: "DISCONNECTED"})
 
                         if (timedOut) {
                             return;
@@ -111,6 +111,8 @@ export function WhatsappSocketManage() {
                             logger.warn(`Socket ${sessionId} logged out`);
                             await fs.rm(sessionDir, {recursive: true, force: true}).catch(() => {
                             });
+                            await WhatsappChatService.deleteBySession(sessionId);
+                            await WhatsappMessageService.deleteBySessionId(sessionId);
                             WhatsAppSockets.delete(sessionId);
                         } else {
                             logger.warn(`Socket ${sessionId} disconnected unexpectedly. Reconnecting...`);

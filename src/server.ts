@@ -30,7 +30,7 @@ async function main() {
         port: appConfig.appPort,
         fetch: app.fetch,
     });
-    await WhatsappSocketManage().start("927f09a2-f902-4043-b80d-4ad388a0ba43")
+    await WhatsappSocketManage().start("1cbff2af-7dec-45c2-bf41-14c4d9c0099c")
     logger.info(`Server is running on port ${appConfig.appPort}`);
 
     ["SIGINT", "SIGTERM"].forEach((signal) => {
