@@ -45,7 +45,7 @@ model WhatsappMessage {
   sessionId   String
   session     WhatsappSession @relation(fields: [sessionId], references: [id])
   chatId      String
-  chat        WhatsappChat    @relation(fields: [chatId], references: [id])
+  chat        WhatsappChat    @relation(fields: [chatId, sessionId], references: [chatId, sessionId])
   messageId   String
   fromMe      Boolean
   senderId    String?

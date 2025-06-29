@@ -5,7 +5,7 @@ CREATE TYPE "SessionStatus" AS ENUM ('CONNECTED', 'DISCONNECTED');
 CREATE TABLE "WhatsappSession" (
     "id" TEXT NOT NULL,
     "phoneNumber" TEXT NOT NULL,
-    "status" "SessionStatus" NOT NULL,
+    "status" "SessionStatus" NOT NULL DEFAULT 'DISCONNECTED',
     "lastConnectedAt" TIMESTAMP(3),
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
@@ -62,4 +62,4 @@ ALTER TABLE "WhatsappChat" ADD CONSTRAINT "WhatsappChat_sessionId_fkey" FOREIGN 
 ALTER TABLE "WhatsappMessage" ADD CONSTRAINT "WhatsappMessage_sessionId_fkey" FOREIGN KEY ("sessionId") REFERENCES "WhatsappSession"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "WhatsappMessage" ADD CONSTRAINT "WhatsappMessage_chatId_fkey" FOREIGN KEY ("chatId") REFERENCES "WhatsappChat"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "WhatsappMessage" ADD CONSTRAINT "WhatsappMessage_chatId_sessionId_fkey" FOREIGN KEY ("chatId", "sessionId") REFERENCES "WhatsappChat"("chatId", "sessionId") ON DELETE RESTRICT ON UPDATE CASCADE;

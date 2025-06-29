@@ -1,6 +1,7 @@
 import {prisma} from "@/lib/prisma-client.ts";
 import {IWhatsappMessageCreate} from "@/types/IWhatsapp.ts";
 import {defineWebSocketHelper} from "hono/dist/types/helper/websocket";
+import * as console from "node:console";
 
 export const WhatsappMessageService = {
     create(data: IWhatsappMessageCreate) {

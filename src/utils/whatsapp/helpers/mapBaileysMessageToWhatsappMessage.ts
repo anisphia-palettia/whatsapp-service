@@ -1,15 +1,11 @@
 import {proto} from 'baileys';
 import {IWhatsappMessageCreate} from '@/types/IWhatsapp.ts';
 
-type Options = {
-    sessionId: string;
-    msg: proto.IWebMessageInfo;
-};
 
 export function mapBaileysMessageToWhatsappMessage(
-    {msg, sessionId}: Options
+    messages: proto.IWebMessageInfo, sessionId: string
 ): IWhatsappMessageCreate {
-    const message = msg.message;
+    const message = messages.message;
 
     const messageType = message ? Object.keys(message)[0] : 'unknown';
 
@@ -25,18 +21,18 @@ export function mapBaileysMessageToWhatsappMessage(
         message?.videoMessage?.caption ??
         null;
 
-    const timestamp = msg.messageTimestamp != null
-        ? BigInt(msg.messageTimestamp.toString())
+    const timestamp = messages.messageTimestamp != null
+        ? BigInt(messages.messageTimestamp.toString())
         : BigInt(0);
 
     return {
         sessionId,
-        chatId: msg.key.remoteJid ?? '',
-        messageId: msg.key.id ?? '',
-        fromMe: msg.key.fromMe ?? false,
-        senderId: msg.key.fromMe
+        chatId: messages.key.remoteJid ?? '',
+        messageId: messages.key.id ?? '',
+        fromMe: messages.key.fromMe ?? false,
+        senderId: messages.key.fromMe
             ? 'me'
-            : msg.key.participant ?? msg.key.remoteJid ?? '',
+            : messages.key.participant ?? messages.key.remoteJid ?? '',
         messageType,
         text,
         caption,

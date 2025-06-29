@@ -14,7 +14,7 @@ import {whatsappQrRedisService} from "@/service/redis/whatsapp-qr-redis.service.
 import {HTTPException} from "hono/http-exception";
 import {WhatsAppSockets} from "@/lib/whatsapp/data";
 import pino from "pino";
-import {WsWhatsappHandler} from "@/utils/whatsapp/ws-whatsapp-handler.ts";
+import {WhatsappConnectionEvent} from "@/utils/whatsapp/whatsapp-connection-event.ts";
 import {WhatsappSessionService} from "@/service/database/whatsapp-session.service.ts";
 import {WhatsappChatService} from "@/service/database/whatsapp-chat.service.ts";
 import {WhatsappMessageService} from "@/service/database/whatsapp-message.service.ts";
@@ -43,6 +43,12 @@ export function WhatsappSocketManage() {
         },
 
         async start(sessionId: string): Promise<"qr" | "ready"> {
+
+            const exist = await WhatsappSessionService.findById(sessionId);
+            if (!exist) {
+                throw new HTTPException(404, {message: `No session with id ${sessionId} exist`});
+            }
+
             this.ensureSocketNotRunning(sessionId);
             await this.ensureQrNotGenerated(sessionId);
 
@@ -56,7 +62,7 @@ export function WhatsappSocketManage() {
                 logger: pino({level: 'silent'})
             });
 
-            const wsWhatsappHandler = WsWhatsappHandler(socket)
+            const whatsappConnectionEvent = WhatsappConnectionEvent(socket)
 
             WhatsAppSockets.set(sessionId, socket);
 
@@ -73,10 +79,9 @@ export function WhatsappSocketManage() {
                     });
                 }, 3 * 60 * 1000);
 
-
                 socket.ev.on('creds.update', saveCreds);
 
-                wsWhatsappHandler.messagingHistorySet(sessionId);
+                whatsappConnectionEvent.messageUpsert(sessionId);
 
                 socket.ev.on('connection.update', async (update) => {
                     const {connection, lastDisconnect, qr} = update;
