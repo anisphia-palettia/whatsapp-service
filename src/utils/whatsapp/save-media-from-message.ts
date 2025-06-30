@@ -11,7 +11,7 @@ export async function saveMediaFromMessage(
     options?: MediaDownloadOptions
 ): Promise<string | null> {
     const msg = message.message;
-    if (!msg || !message.key.remoteJid || 'protocolMessage' in msg) return null;
+    if (!msg || !message.key.remoteJid) return null;
 
     const mediaTypes = [
         {key: 'imageMessage', ext: 'jpg'},

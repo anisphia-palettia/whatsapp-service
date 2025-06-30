@@ -26,18 +26,15 @@ model WhatsappSession {
 }
 
 model WhatsappChat {
-  id          String            @id @default(uuid())
+  id          String            @id @unique
   sessionId   String
   session     WhatsappSession   @relation(fields: [sessionId], references: [id])
-  chatId      String
   name        String
   isGroup     Boolean
   unreadCount Int               @default(0)
-  messages    WhatsappMessage[]
+  messages    WhatsappMessage[] @relation("ChatMessages")
   createdAt   DateTime          @default(now())
   updatedAt   DateTime          @updatedAt
-
-  @@unique([sessionId, chatId])
 }
 
 model WhatsappMessage {
@@ -45,8 +42,8 @@ model WhatsappMessage {
   sessionId   String
   session     WhatsappSession @relation(fields: [sessionId], references: [id])
   chatId      String
-  chat        WhatsappChat    @relation(fields: [chatId, sessionId], references: [chatId, sessionId])
-  messageId   String
+  chat        WhatsappChat    @relation("ChatMessages", fields: [chatId], references: [id], onDelete: Cascade)
+  messageId   String          @unique
   fromMe      Boolean
   senderId    String?
   messageType String?
@@ -56,6 +53,4 @@ model WhatsappMessage {
   timestamp   BigInt
   createdAt   DateTime        @default(now())
   updatedAt   DateTime        @updatedAt
-
-  @@unique([sessionId, messageId])
 }

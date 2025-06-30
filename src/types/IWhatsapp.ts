@@ -12,7 +12,6 @@ export interface IWhatsappSessionUpdate {
 
 export interface IWhatsappChatCreate {
     sessionId: string;
-    chatId: string;
     name: string;
     isGroup: boolean;
     unreadCount?: number;

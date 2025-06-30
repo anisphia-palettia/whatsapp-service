@@ -8,7 +8,6 @@ export function mapBaileysChatToWhatsappChat(chat: Chat, contact: Contact | unde
     const name = contact?.name ?? chat.name ?? chat.id;
     return {
         sessionId: sessionId,
-        chatId: chat.id,
         name,
         isGroup: chat.id.endsWith('@g.us'),
         unreadCount: chat.unreadCount ?? 0

@@ -69,6 +69,7 @@ export function WhatsappSocketManage() {
             return new Promise((resolve, reject) => {
                 let isResolved = false;
                 let timedOut = false;
+
                 const hardTimeout = setTimeout(async () => {
                     logger.warn(`Session ${sessionId} expired after 3 minutes`);
                     timedOut = true;
@@ -81,6 +82,7 @@ export function WhatsappSocketManage() {
 
                 socket.ev.on('creds.update', saveCreds);
 
+                whatsappConnectionEvent.messagingHistorySet(sessionId);
                 whatsappConnectionEvent.messageUpsert(sessionId);
 
                 socket.ev.on('connection.update', async (update) => {

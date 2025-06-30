@@ -1,11 +1,9 @@
-import {WhatsappSocketManage} from "@/lib/whatsapp/manage.ts";
-
+import {WhatsappChatService} from "@/service/database/whatsapp-chat.service.ts";
 
 export function WhatsappSocketChat(sessionId: string) {
-    const socket = WhatsappSocketManage().getSocketOrThrow(sessionId);
     return {
         async all() {
-
+            return WhatsappChatService.findBySession(sessionId)
         }
     }
 }

@@ -1,21 +1,17 @@
-import { WhatsappSocketManage } from "@/lib/whatsapp/manage";
+import {WhatsappSocketManage} from "@/lib/whatsapp/manage";
 import type {
     WhatsAppBroadcastWithImageInput,
     WhatsAppMessageBroadcastInput,
     WhatsappMessageTextInput,
     WhatsAppMessageWithImageInput,
 } from "@/schema/whatsapp-message.schema.ts";
-import { saveMedia } from "@/utils/save-media";
-import { readFile } from "fs/promises";
+import {saveMedia} from "@/utils/save-media";
+import {readFile} from "fs/promises";
 import mime from "mime";
+import {buildTargetId} from "@/utils/whatsapp/build-targetId.ts";
 
 export function WhatsappSocketMessage(sessionId: string, isGroup = false) {
     const socket = WhatsappSocketManage().getSocketOrThrow(sessionId);
-
-    function buildTargetId(phoneNumber: string): string {
-        if (phoneNumber.includes("@")) return phoneNumber;
-        return `${phoneNumber}${isGroup ? "@g.us" : "@s.whatsapp.net"}`;
-    }
 
     async function prepareImageMessage(filePath: string, caption?: string) {
         const buffer = await readFile(filePath);
@@ -29,17 +25,17 @@ export function WhatsappSocketMessage(sessionId: string, isGroup = false) {
     }
 
     return {
-        async text({ text, recipient }: WhatsappMessageTextInput) {
-            const targetId = buildTargetId(recipient);
+        async text({text, recipient}: WhatsappMessageTextInput) {
+            const targetId = buildTargetId(recipient, isGroup);
             try {
-                await socket.sendMessage(targetId, { text });
+                await socket.sendMessage(targetId, {text});
             } catch (err: any) {
                 throw new Error(`Failed to send text: ${err.message}`);
             }
         },
 
-        async withImage({ image, recipient, caption }: WhatsAppMessageWithImageInput) {
-            const targetId = buildTargetId(recipient);
+        async withImage({image, recipient, caption}: WhatsAppMessageWithImageInput) {
+            const targetId = buildTargetId(recipient, isGroup);
             try {
                 const filePath = await saveMedia(image);
                 const imageMessage = await prepareImageMessage(filePath, caption);
@@ -49,23 +45,23 @@ export function WhatsappSocketMessage(sessionId: string, isGroup = false) {
             }
         },
 
-        async broadcast({ text, recipients }: WhatsAppMessageBroadcastInput) {
+        async broadcast({text, recipients}: WhatsAppMessageBroadcastInput) {
             for (const recipient of recipients) {
-                const targetId = buildTargetId(recipient);
+                const targetId = buildTargetId(recipient, isGroup);
                 try {
-                    await socket.sendMessage(targetId, { text });
+                    await socket.sendMessage(targetId, {text});
                 } catch (err: any) {
                     console.error(`Failed to send text to ${targetId}: ${err.message}`);
                 }
             }
         },
 
-        async broadcastWithImage({ image, recipients, caption }: WhatsAppBroadcastWithImageInput) {
+        async broadcastWithImage({image, recipients, caption}: WhatsAppBroadcastWithImageInput) {
             const filePath = await saveMedia(image);
             const imageMessage = await prepareImageMessage(filePath, caption);
 
             for (const recipient of recipients) {
-                const targetId = buildTargetId(recipient);
+                const targetId = buildTargetId(recipient, isGroup);
                 try {
                     await socket.sendMessage(targetId, imageMessage);
                 } catch (err: any) {

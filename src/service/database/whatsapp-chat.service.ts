@@ -4,31 +4,28 @@ import {prisma} from "@/lib/prisma-client.ts";
 import {IWhatsappChatCreate, IWhatsappChatUpdate} from "@/types/IWhatsapp.ts";
 
 export const WhatsappChatService = {
-    create(data: IWhatsappChatCreate) {
-        return prisma.whatsappChat.create({data});
+    create(chatId: string, data: IWhatsappChatCreate) {
+        return prisma.whatsappChat.create({data: {id: chatId, ...data}});
     },
 
-    createOrUpdate(data: IWhatsappChatCreate) {
+    createOrUpdate(data: IWhatsappChatCreate, chatId: string) {
         return prisma.whatsappChat.upsert({
             where: {
-                sessionId_chatId: {
-                    sessionId: data.sessionId,
-                    chatId: data.chatId
-                }
+                id: chatId,
             },
             update: data,
-            create: data
+            create: {
+                id: chatId,
+                ...data,
+            }
         });
     },
 
     findByChatId(sessionId: string, chatId: string) {
         return prisma.whatsappChat.findUnique({
             where: {
-                sessionId_chatId: {
-                    sessionId,
-                    chatId
-                }
-            }
+                id: chatId,
+            },
         });
     },
 

@@ -24,5 +24,9 @@ export const WhatsappSessionService = {
 
     delete(id: string) {
         return prisma.whatsappSession.delete({where: {id}});
+    },
+
+    findByPhoneNumber(phoneNumber: string) {
+        return prisma.whatsappSession.findUnique({where: {phoneNumber}});
     }
 };
