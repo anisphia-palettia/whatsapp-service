@@ -32,5 +32,5 @@ export interface IWhatsappMessageCreate {
     text?: string | null;
     caption?: string | null;
     mediaPath?: string | null;
-    timestamp: bigint;
+    timestamp: string;
 }

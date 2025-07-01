@@ -21,7 +21,7 @@ export const WhatsappChatService = {
         });
     },
 
-    findByChatId(sessionId: string, chatId: string) {
+    findByChatId(chatId: string) {
         return prisma.whatsappChat.findUnique({
             where: {
                 id: chatId,

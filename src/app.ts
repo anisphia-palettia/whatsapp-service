@@ -2,8 +2,11 @@ import {LocalHono} from "@/types/LocalHono";
 import errorHandler from "@/middleware/error-handler";
 import r_index from "@/route/_r_index";
 import {sendError} from "@/utils/response-handler.ts";
+import {serveStatic} from "@hono/node-server/serve-static";
 
 const app = new LocalHono()
+
+app.use('/public/*', serveStatic({ root: './' }))
 
 app.route("", r_index)
 

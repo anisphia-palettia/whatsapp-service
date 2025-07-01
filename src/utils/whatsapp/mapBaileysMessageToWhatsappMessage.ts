@@ -22,8 +22,8 @@ export function mapBaileysMessageToWhatsappMessage(
         null;
 
     const timestamp = messages.messageTimestamp != null
-        ? BigInt(messages.messageTimestamp.toString())
-        : BigInt(0);
+        ? messages.messageTimestamp.toString()
+        : '0';
 
     return {
         sessionId,

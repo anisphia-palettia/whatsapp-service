@@ -84,6 +84,7 @@ export function WhatsappSocketManage() {
 
                 whatsappConnectionEvent.messagingHistorySet(sessionId);
                 whatsappConnectionEvent.messageUpsert(sessionId);
+                whatsappConnectionEvent.groupsUpdate(sessionId);
 
                 socket.ev.on('connection.update', async (update) => {
                     const {connection, lastDisconnect, qr} = update;
