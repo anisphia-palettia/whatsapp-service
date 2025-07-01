@@ -5,6 +5,7 @@ import {WhatsappChatService} from "@/service/database/whatsapp-chat.service.ts";
 import {saveMediaFromMessage} from "@/utils/whatsapp/save-media-from-message.ts";
 import {WhatsappMessageService} from "@/service/database/whatsapp-message.service.ts";
 import {logger} from "@/lib/logger.ts";
+import * as console from "node:console";
 
 const mediaTypes = ['imageMessage', 'videoMessage', 'documentMessage', 'audioMessage', 'stickerMessage'];
 
@@ -16,13 +17,10 @@ export function WhatsappConnectionEvent(socket: WASocket) {
         const mediaKey = mediaTypes.find(type => msgKeys.includes(type));
         const data = mapBaileysMessageToWhatsappMessage(message, sessionId);
 
+        console.log(mediaKey, data.messageId)
         if (mediaKey) {
             try {
-                data.mediaPath = await saveMediaFromMessage(message, sessionId, {
-                    startByte: 0,
-                    endByte: undefined,
-                    options: {}
-                });
+                data.mediaPath = await saveMediaFromMessage(message, sessionId, {});
             } catch (err) {
                 logger.error("Failed to save media:", err);
             }
