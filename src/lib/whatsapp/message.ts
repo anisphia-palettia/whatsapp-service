@@ -25,10 +25,10 @@ export function WhatsappSocketMessage(sessionId: string, isGroup = false) {
     }
 
     return {
-        async text({text, recipient}: WhatsappMessageTextInput) {
+        async text({text, recipient, msg}: WhatsappMessageTextInput) {
             const targetId = buildTargetId(recipient, isGroup);
             try {
-                await socket.sendMessage(targetId, {text});
+                await socket.sendMessage(targetId, {text}, msg ? {quoted: msg} : {});
             } catch (err: any) {
                 throw new Error(`Failed to send text: ${err.message}`);
             }

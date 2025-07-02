@@ -5,11 +5,13 @@ export const whatsappMessageSchema = {
     text: z.object({
         text: z.string().min(1),
         recipient: z.string().min(1),
+        msg: z.any().optional(),
     }),
     withImage: z.object({
         recipient: z.string().min(1),
         caption: z.string().optional(),
         image: imageValidator,
+        msg: z.any().optional(),
     }),
     broadcast: z.object({
         recipients: z.array(z.string()),

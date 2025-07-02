@@ -2,8 +2,11 @@ import {WhatsappSessionService} from "@/service/database/whatsapp-session.servic
 import {logger} from "@/lib/logger.ts";
 import {WhatsappChatService} from "@/service/database/whatsapp-chat.service.ts";
 import {IWhatsappMessageCreate} from "@/types/IWhatsapp.ts";
+import * as console from "node:console";
+import {proto} from "baileys";
+import IWebMessageInfo = proto.IWebMessageInfo;
 
-export async function handleIncomingMessage(data: IWhatsappMessageCreate, sessionId: string) {
+export async function handleIncomingMessage(data: IWhatsappMessageCreate, sessionId: string, msg: IWebMessageInfo) {
 
     const session = await WhatsappSessionService.findById(sessionId);
     if (!session?.callbackUrl) {
@@ -19,7 +22,8 @@ export async function handleIncomingMessage(data: IWhatsappMessageCreate, sessio
 
     const payload = {
         name: chat.name,
-        ...data
+        ...data,
+        msg
     };
 
     fetch(session.callbackUrl, {
@@ -28,8 +32,9 @@ export async function handleIncomingMessage(data: IWhatsappMessageCreate, sessio
         body: JSON.stringify(payload),
     }).then(async (res) => {
         console.log(res)
-        logger.info(`[${sessionId}] Webhook sent. Status: ${res}`);
+        logger.info(`[${sessionId}] Webhook sent. Status: ${res.status}`);
     }).catch((err) => {
+        console.log(err);
         logger.error(`[${sessionId}] Failed to send webhook`, err);
     });
 }

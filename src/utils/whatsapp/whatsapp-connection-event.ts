@@ -6,6 +6,7 @@ import {saveMediaFromMessage} from "@/utils/whatsapp/save-media-from-message.ts"
 import {WhatsappMessageService} from "@/service/database/whatsapp-message.service.ts";
 import {logger} from "@/lib/logger.ts";
 import {handleIncomingMessage} from "@/utils/whatsapp/handle-incoming-message.ts";
+import {WhatsappSessionService} from "@/service/database/whatsapp-session.service.ts";
 
 const mediaTypes = ['imageMessage', 'videoMessage', 'documentMessage', 'audioMessage', 'stickerMessage'];
 
@@ -63,7 +64,10 @@ export function WhatsappConnectionEvent(socket: WASocket) {
         if (message.message) {
             await WhatsappMessageService.createOrUpdate(data);
             logger.info(`[${sessionId}] Message ${data.messageId} saved.`);
-            await handleIncomingMessage(data, sessionId);
+            const session = await WhatsappSessionService.findById(sessionId);
+            if (session?.callbackUrl) {
+                await handleIncomingMessage(data, sessionId, message);
+            }
         } else {
             logger.debug(`[${sessionId}] Stub-only message. Message data not persisted.`);
         }
@@ -93,7 +97,10 @@ export function WhatsappConnectionEvent(socket: WASocket) {
         },
 
         async messageUpsert(sessionId: string) {
-            socket.ev.on("messages.upsert", async ({messages}) => {
+            socket.ev.on("messages.upsert", async ({messages, type}) => {
+                if (type != "notify") {
+                    return
+                }
                 logger.info(`[${sessionId}] Incoming messages.upsert: ${messages.length} messages`);
                 for (const message of messages) {
                     try {
