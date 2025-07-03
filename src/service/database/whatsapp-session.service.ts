@@ -1,6 +1,6 @@
-import {prisma} from "@/lib/prisma-client.ts";
-import {IWhatsappSessionUpdate} from "@/types/IWhatsapp.ts";
-import {SessionCreateInput} from "@/schema/session.schema.ts";
+import {prisma} from "@/lib/prisma-client";
+import {IWhatsappSessionUpdate} from "@/types/IWhatsapp";
+import {SessionCreateInput} from "@/schema/session.schema";
 
 export const WhatsappSessionService = {
     create(data: SessionCreateInput) {

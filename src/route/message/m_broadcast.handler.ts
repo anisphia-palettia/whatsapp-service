@@ -1,6 +1,6 @@
 import {LocalHono} from "@/types/LocalHono";
 import validate from "@/middleware/validate";
-import {type WhatsAppMessageBroadcastInput, whatsappMessageSchema} from "@/schema/whatsapp-message.schema.ts";
+import {type WhatsAppMessageBroadcastInput, whatsappMessageSchema} from "@/schema/whatsapp-message.schema";
 import {withSessionId} from "@/middleware/with-sessionid";
 import {WhatsappSocketMessage} from "@/lib/whatsapp/message";
 import {sendSuccess} from "@/utils/response-handler";

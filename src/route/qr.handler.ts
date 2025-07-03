@@ -1,6 +1,6 @@
 import {LocalHono} from "@/types/LocalHono";
 import {withSessionId} from "@/middleware/with-sessionid";
-import {whatsappQrRedisService} from "@/service/redis/whatsapp-qr-redis.service.ts";
+import {whatsappQrRedisService} from "@/service/redis/whatsapp-qr-redis.service";
 import {sendSuccess} from "@/utils/response-handler";
 
 const qrHandler = new LocalHono()

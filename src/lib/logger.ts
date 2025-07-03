@@ -1,7 +1,7 @@
 import pino from "pino";
 import path from "path";
 import fs from "fs";
-import {appConfig} from "@/config/app.config.ts";
+import {appConfig} from "@/config/app.config";
 import dayjs from "dayjs";
 
 const pathLog = path.join(process.cwd(), "logs", "app.log")

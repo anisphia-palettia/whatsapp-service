@@ -1,1 +1,1 @@
-export {mapBaileysChatToWhatsappChat} from "@/utils/whatsapp/mapBaileysChatToWhatsappChat.ts";
+export {mapBaileysChatToWhatsappChat} from "@/utils/whatsapp/mapBaileysChatToWhatsappChat";

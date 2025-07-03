@@ -1,5 +1,5 @@
 import {proto} from 'baileys';
-import {IWhatsappMessageCreate} from '@/types/IWhatsapp.ts';
+import {IWhatsappMessageCreate} from '@/types/IWhatsapp';
 
 
 export function mapBaileysMessageToWhatsappMessage(

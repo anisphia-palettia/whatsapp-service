@@ -4,11 +4,11 @@ import type {
     WhatsAppMessageBroadcastInput,
     WhatsappMessageTextInput,
     WhatsAppMessageWithImageInput,
-} from "@/schema/whatsapp-message.schema.ts";
+} from "@/schema/whatsapp-message.schema";
 import {saveMedia} from "@/utils/save-media";
 import {readFile} from "fs/promises";
 import mime from "mime";
-import {buildTargetId} from "@/utils/whatsapp/build-targetId.ts";
+import {buildTargetId} from "@/utils/whatsapp/build-targetId";
 
 export function WhatsappSocketMessage(sessionId: string, isGroup = false) {
     const socket = WhatsappSocketManage().getSocketOrThrow(sessionId);

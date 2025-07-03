@@ -1,4 +1,4 @@
-import {redis} from "@/lib/redis.ts";
+import {redis} from "@/lib/redis";
 import {HTTPException} from "hono/http-exception";
 import * as console from "node:console";
 

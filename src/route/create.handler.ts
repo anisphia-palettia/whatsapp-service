@@ -1,8 +1,8 @@
-import {LocalHono} from "@/types/LocalHono.ts";
-import validate from "@/middleware/validate.ts";
-import {SessionCreateInput, sessionSchema} from "@/schema/session.schema.ts";
-import {WhatsappSessionService} from "@/service/database/whatsapp-session.service.ts";
-import {sendSuccess} from "@/utils/response-handler.ts";
+import {LocalHono} from "@/types/LocalHono";
+import validate from "@/middleware/validate";
+import {SessionCreateInput, sessionSchema} from "@/schema/session.schema";
+import {WhatsappSessionService} from "@/service/database/whatsapp-session.service";
+import {sendSuccess} from "@/utils/response-handler";
 import {HTTPException} from "hono/http-exception";
 
 const createHandler = new LocalHono()

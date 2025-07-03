@@ -1,6 +1,6 @@
 import type {MiddlewareHandler} from "hono";
 import {HTTPException} from "hono/http-exception";
-import {WhatsappSessionService} from "@/service/database/whatsapp-session.service.ts";
+import {WhatsappSessionService} from "@/service/database/whatsapp-session.service";
 
 export function withSessionId(): MiddlewareHandler {
     return async (c, next) => {

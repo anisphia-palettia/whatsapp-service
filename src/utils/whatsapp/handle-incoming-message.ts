@@ -1,7 +1,7 @@
-import {WhatsappSessionService} from "@/service/database/whatsapp-session.service.ts";
-import {logger} from "@/lib/logger.ts";
-import {WhatsappChatService} from "@/service/database/whatsapp-chat.service.ts";
-import {IWhatsappMessageCreate} from "@/types/IWhatsapp.ts";
+import {WhatsappSessionService} from "@/service/database/whatsapp-session.service";
+import {logger} from "@/lib/logger";
+import {WhatsappChatService} from "@/service/database/whatsapp-chat.service";
+import {IWhatsappMessageCreate} from "@/types/IWhatsapp";
 import * as console from "node:console";
 import {proto} from "baileys";
 import IWebMessageInfo = proto.IWebMessageInfo;

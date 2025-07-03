@@ -1,5 +1,5 @@
-import {prisma} from "@/lib/prisma-client.ts";
-import {IWhatsappMessageCreate} from "@/types/IWhatsapp.ts";
+import {prisma} from "@/lib/prisma-client";
+import {IWhatsappMessageCreate} from "@/types/IWhatsapp";
 
 export const WhatsappMessageService = {
     create(data: IWhatsappMessageCreate) {

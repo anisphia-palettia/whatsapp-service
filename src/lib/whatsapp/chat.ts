@@ -1,4 +1,4 @@
-import {WhatsappChatService} from "@/service/database/whatsapp-chat.service.ts";
+import {WhatsappChatService} from "@/service/database/whatsapp-chat.service";
 
 export function WhatsappSocketChat(sessionId: string) {
     return {

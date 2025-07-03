@@ -1,6 +1,6 @@
-import {LocalHono} from "@/types/LocalHono.ts";
-import c_allHandler from "@/route/chats/c_all.handler.ts";
-import c_byGroupHandler from "@/route/chats/c_by-group.handler.ts";
+import {LocalHono} from "@/types/LocalHono";
+import c_allHandler from "@/route/chats/c_all.handler";
+import c_byGroupHandler from "@/route/chats/c_by-group.handler";
 
 const r_chats = new LocalHono()
 

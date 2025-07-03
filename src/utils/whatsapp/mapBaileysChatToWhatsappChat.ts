@@ -1,5 +1,5 @@
 import {Chat, Contact} from 'baileys';
-import {IWhatsappChatCreate} from "@/types/IWhatsapp.ts";
+import {IWhatsappChatCreate} from "@/types/IWhatsapp";
 
 
 export function mapBaileysChatToWhatsappChat(chat: Chat, contact: Contact | undefined, sessionId: string

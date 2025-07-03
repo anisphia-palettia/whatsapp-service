@@ -3,8 +3,8 @@ import startHandler from "@/route/start.handler";
 import qrHandler from "@/route/qr.handler";
 import r_message from "@/route/message/_r_message";
 import groupsHandler from "@/route/groups.handler";
-import r_chats from "@/route/chats/_r_chats.ts";
-import createHandler from "@/route/create.handler.ts";
+import r_chats from "@/route/chats/_r_chats";
+import createHandler from "@/route/create.handler";
 
 const r_index = new LocalHono()
 

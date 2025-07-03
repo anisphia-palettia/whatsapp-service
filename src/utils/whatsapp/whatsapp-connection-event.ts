@@ -1,12 +1,12 @@
 import {WAMessage, WASocket} from "baileys";
-import {mapBaileysChatToWhatsappChat} from "@/utils/whatsapp/transformers.ts";
-import {mapBaileysMessageToWhatsappMessage} from "@/utils/whatsapp/mapBaileysMessageToWhatsappMessage.ts";
-import {WhatsappChatService} from "@/service/database/whatsapp-chat.service.ts";
-import {saveMediaFromMessage} from "@/utils/whatsapp/save-media-from-message.ts";
-import {WhatsappMessageService} from "@/service/database/whatsapp-message.service.ts";
-import {logger} from "@/lib/logger.ts";
-import {handleIncomingMessage} from "@/utils/whatsapp/handle-incoming-message.ts";
-import {WhatsappSessionService} from "@/service/database/whatsapp-session.service.ts";
+import {mapBaileysChatToWhatsappChat} from "@/utils/whatsapp/transformers";
+import {mapBaileysMessageToWhatsappMessage} from "@/utils/whatsapp/mapBaileysMessageToWhatsappMessage";
+import {WhatsappChatService} from "@/service/database/whatsapp-chat.service";
+import {saveMediaFromMessage} from "@/utils/whatsapp/save-media-from-message";
+import {WhatsappMessageService} from "@/service/database/whatsapp-message.service";
+import {logger} from "@/lib/logger";
+import {handleIncomingMessage} from "@/utils/whatsapp/handle-incoming-message";
+import {WhatsappSessionService} from "@/service/database/whatsapp-session.service";
 
 const mediaTypes = ['imageMessage', 'videoMessage', 'documentMessage', 'audioMessage', 'stickerMessage'];
 

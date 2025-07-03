@@ -10,14 +10,14 @@ import makeWASocket, {
 import fs from 'fs/promises';
 import path from 'path';
 import {logger} from "@/lib/logger";
-import {whatsappQrRedisService} from "@/service/redis/whatsapp-qr-redis.service.ts";
+import {whatsappQrRedisService} from "@/service/redis/whatsapp-qr-redis.service";
 import {HTTPException} from "hono/http-exception";
 import {WhatsAppSockets} from "@/lib/whatsapp/data";
 import pino from "pino";
-import {WhatsappConnectionEvent} from "@/utils/whatsapp/whatsapp-connection-event.ts";
-import {WhatsappSessionService} from "@/service/database/whatsapp-session.service.ts";
-import {WhatsappChatService} from "@/service/database/whatsapp-chat.service.ts";
-import {WhatsappMessageService} from "@/service/database/whatsapp-message.service.ts";
+import {WhatsappConnectionEvent} from "@/utils/whatsapp/whatsapp-connection-event";
+import {WhatsappSessionService} from "@/service/database/whatsapp-session.service";
+import {WhatsappChatService} from "@/service/database/whatsapp-chat.service";
+import {WhatsappMessageService} from "@/service/database/whatsapp-message.service";
 
 export function WhatsappSocketManage() {
     return {
@@ -71,14 +71,14 @@ export function WhatsappSocketManage() {
                 let timedOut = false;
 
                 const hardTimeout = setTimeout(async () => {
-                    logger.warn(`Session ${sessionId} expired after 3 minutes`);
+                    logger.warn(`Session ${sessionId} expired after 1 minutes`);
                     timedOut = true;
                     await socket.logout();
                     WhatsAppSockets.delete(sessionId);
                     await whatsappQrRedisService.deleteQr(sessionId);
                     await fs.rm(sessionDir, {recursive: true, force: true}).catch(() => {
                     });
-                }, 3 * 60 * 1000);
+                }, 60 * 1000);
 
                 socket.ev.on('creds.update', saveCreds);
 

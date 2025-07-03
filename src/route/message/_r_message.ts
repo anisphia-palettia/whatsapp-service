@@ -3,10 +3,10 @@ import m_textHandler from "@/route/message/m_text.handler";
 import m_withImageHandler from "@/route/message/m_with-image.handler";
 import m_broadcastHandler from "@/route/message/m_broadcast.handler";
 import m_broadcastWithImageHandler from "@/route/message/m_broadcast-with-image.handler";
-import {withSessionId} from "@/middleware/with-sessionid.ts";
-import {WhatsappMessageService} from "@/service/database/whatsapp-message.service.ts";
-import {sendSuccess} from "@/utils/response-handler.ts";
-import {withChatId} from "@/middleware/with-chatId.ts";
+import {withSessionId} from "@/middleware/with-sessionid";
+import {WhatsappMessageService} from "@/service/database/whatsapp-message.service";
+import {sendSuccess} from "@/utils/response-handler";
+import {withChatId} from "@/middleware/with-chatId";
 
 const r_message = new LocalHono()
 

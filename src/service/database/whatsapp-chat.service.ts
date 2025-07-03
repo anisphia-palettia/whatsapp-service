@@ -1,7 +1,7 @@
 // src/services/whatsappChat.service.ts
 
-import {prisma} from "@/lib/prisma-client.ts";
-import {IWhatsappChatCreate, IWhatsappChatUpdate} from "@/types/IWhatsapp.ts";
+import {prisma} from "@/lib/prisma-client";
+import {IWhatsappChatCreate, IWhatsappChatUpdate} from "@/types/IWhatsapp";
 
 export const WhatsappChatService = {
     create(chatId: string, data: IWhatsappChatCreate) {

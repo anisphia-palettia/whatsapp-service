@@ -1,7 +1,7 @@
-import {LocalHono} from "@/types/LocalHono.ts";
-import {withSessionId} from "@/middleware/with-sessionid.ts";
-import {sendSuccess} from "@/utils/response-handler.ts";
-import {WhatsappSocketChat} from "@/lib/whatsapp/chat.ts";
+import {LocalHono} from "@/types/LocalHono";
+import {withSessionId} from "@/middleware/with-sessionid";
+import {sendSuccess} from "@/utils/response-handler";
+import {WhatsappSocketChat} from "@/lib/whatsapp/chat";
 
 const c_allHandler = new LocalHono()
 

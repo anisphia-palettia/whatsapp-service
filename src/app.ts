@@ -1,7 +1,7 @@
 import {LocalHono} from "@/types/LocalHono";
 import errorHandler from "@/middleware/error-handler";
 import r_index from "@/route/_r_index";
-import {sendError} from "@/utils/response-handler.ts";
+import {sendError} from "@/utils/response-handler";
 import {serveStatic} from "@hono/node-server/serve-static";
 
 const app = new LocalHono()
