@@ -33,7 +33,6 @@ export async function handleIncomingMessage(data: IWhatsappMessageCreate, sessio
     }).then(async (res) => {
         logger.info(`[${sessionId}] Webhook sent. Status: ${res.status}`);
     }).catch((err) => {
-        console.log(err);
         logger.error(`[${sessionId}] Failed to send webhook`, err);
     });
 }

@@ -34,9 +34,11 @@ export async function saveMediaFromMessage(
             );
 
             const messageId = message.key.id ?? `${Date.now()}`;
-            const fileName = `${messageId}.${ext}`;
+            const timestamp = message.messageTimestamp?.toString() ?? Date.now().toString();
+            const fileName = `${messageId}_${timestamp}.${ext}`;
             const folderPath = path.join('public', sessionId);
             const filePath = path.join(folderPath, fileName);
+
             await mkdir(folderPath, {recursive: true});
             await writeFile(filePath, buffer);
 

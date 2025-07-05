@@ -5,8 +5,8 @@ import {WhatsappChatService} from "@/service/database/whatsapp-chat.service";
 import {saveMediaFromMessage} from "@/utils/whatsapp/save-media-from-message";
 import {WhatsappMessageService} from "@/service/database/whatsapp-message.service";
 import {logger} from "@/lib/logger";
-import {handleIncomingMessage} from "@/utils/whatsapp/handle-incoming-message";
 import {WhatsappSessionService} from "@/service/database/whatsapp-session.service";
+import {handleIncomingMessage} from "@/utils/whatsapp/handle-incoming-message";
 
 const mediaTypes = ['imageMessage', 'videoMessage', 'documentMessage', 'audioMessage', 'stickerMessage'];
 
@@ -15,7 +15,6 @@ export function WhatsappConnectionEvent(socket: WASocket) {
     async function handleMessage(message: WAMessage, sessionId: string) {
         const messageId = message.key?.id;
         const remoteJid = message.key?.remoteJid;
-
 
         if (!messageId || !remoteJid) {
             logger.warn(`[${sessionId}] Skipping message with missing key info.`);
@@ -38,21 +37,25 @@ export function WhatsappConnectionEvent(socket: WASocket) {
         const keys = Object.keys(message.message || {});
         const mediaKey = mediaTypes.find((type) => keys.includes(type));
         if (mediaKey) {
-            const mediaPath = await saveMediaFromMessage(message, sessionId);
-            if (mediaPath) {
-                data.mediaPath = mediaPath;
-                logger.info(`[${sessionId}] Media saved at: ${mediaPath}`);
-            } else {
-                logger.warn(`[${sessionId}] Failed to save media for ${mediaKey}`);
+            try {
+                const mediaPath = await saveMediaFromMessage(message, sessionId);
+                if (mediaPath) {
+                    data.mediaPath = mediaPath;
+                    logger.info(`[${sessionId}] Media saved at: ${mediaPath}`);
+                } else {
+                    logger.warn(`[${sessionId}] Media path not returned. Possibly unsupported format or missing data.`);
+                }
+            } catch (err) {
+                logger.error(`[${sessionId}] Failed to save media for ${mediaKey}:`, err);
             }
         }
 
-        let chat = await WhatsappChatService.findByChatId(data.chatId);
+        const chat = await WhatsappChatService.findByChatId(data.chatId);
         if (!chat) {
             const isGroup = data.chatId.endsWith('@g.us');
             const groupName = message.messageStubParameters?.[0] ?? 'New Group';
 
-            chat = await WhatsappChatService.createOrUpdate({
+            await WhatsappChatService.createOrUpdate({
                 sessionId,
                 name: groupName,
                 isGroup,
@@ -62,12 +65,14 @@ export function WhatsappConnectionEvent(socket: WASocket) {
             logger.info(`[${sessionId}] Group chat created from stub message: ${data.chatId} (${groupName})`);
         }
 
-        if (message.message) {
+
+        if (message) {
+            const session = await WhatsappSessionService.findById(sessionId);
+            if (session?.callbackUrl) {
+                await handleIncomingMessage(data, sessionId, message);
+            }
             await WhatsappMessageService.createOrUpdate(data);
             logger.info(`[${sessionId}] Message ${data.messageId} saved.`);
-            const session = await WhatsappSessionService.findById(sessionId);
-            console.log(session?.callbackUrl)
-            await handleIncomingMessage(data, sessionId, message);
 
         } else {
             logger.debug(`[${sessionId}] Stub-only message. Message data not persisted.`);
@@ -80,19 +85,19 @@ export function WhatsappConnectionEvent(socket: WASocket) {
             socket.ev.on("messaging-history.set", async ({chats, contacts, messages}) => {
                 logger.info(`[${sessionId}] Syncing chat history: ${chats.length} chats, ${messages.length} messages`);
 
-                for (const chat of chats) {
-                    const contact = contacts.find(c => c.id === chat.id);
-                    const data = mapBaileysChatToWhatsappChat(chat, contact, sessionId);
-                    await WhatsappChatService.createOrUpdate(data, chat.id);
-                    logger.debug(`[${sessionId}] Synced chat ${chat.id}`);
-                }
-
                 for (const message of messages) {
                     try {
                         await handleMessage(message, sessionId);
                     } catch (err: any) {
                         logger.error(`[${sessionId}] Error processing message from history`, err);
                     }
+                }
+                for (const chat of chats) {
+                    const contact = contacts.find(c => c.id === chat.id);
+                    const data = mapBaileysChatToWhatsappChat(chat, contact, sessionId);
+                    await WhatsappChatService.createOrUpdate(data, chat.id);
+                    logger.debug(`[${sessionId}] Synced chat ${chat.id}`);
+
                 }
             });
         },

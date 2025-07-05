@@ -18,7 +18,6 @@ export const WhatsappMessageService = {
                 senderId: data.senderId,
                 messageType: data.messageType,
                 text: data.text,
-                caption: data.caption,
                 mediaPath: data.mediaPath,
                 timestamp: data.timestamp,
                 updatedAt: new Date()

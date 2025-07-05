@@ -30,7 +30,6 @@ export interface IWhatsappMessageCreate {
     senderId?: string | null;
     messageType?: string | null;
     text?: string | null;
-    caption?: string | null;
     mediaPath?: string | null;
     timestamp: string;
 }

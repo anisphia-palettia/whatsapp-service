@@ -1,7 +1,6 @@
 import {proto} from 'baileys';
 import {IWhatsappMessageCreate} from '@/types/IWhatsapp';
 
-
 export function mapBaileysMessageToWhatsappMessage(
     messages: proto.IWebMessageInfo, sessionId: string
 ): IWhatsappMessageCreate {
@@ -12,11 +11,6 @@ export function mapBaileysMessageToWhatsappMessage(
     const text =
         message?.conversation ??
         message?.extendedTextMessage?.text ??
-        message?.imageMessage?.caption ??
-        message?.videoMessage?.caption ??
-        null;
-
-    const caption =
         message?.imageMessage?.caption ??
         message?.videoMessage?.caption ??
         null;
@@ -35,7 +29,6 @@ export function mapBaileysMessageToWhatsappMessage(
             : messages.key.participant ?? messages.key.remoteJid ?? '',
         messageType,
         text,
-        caption,
         mediaPath: null,
         timestamp,
     };

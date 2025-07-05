@@ -9,14 +9,21 @@ export const WhatsappChatService = {
     },
 
     createOrUpdate(data: IWhatsappChatCreate, chatId: string) {
+        const cleanData = {
+            name: data.name ?? "",
+            isGroup: data.isGroup ?? false,
+            unreadCount: data.unreadCount ?? 0,
+            sessionId: data.sessionId,
+        };
+
         return prisma.whatsappChat.upsert({
             where: {
                 id: chatId,
             },
-            update: data,
+            update: cleanData,
             create: {
                 id: chatId,
-                ...data,
+                ...cleanData,
             }
         });
     },
