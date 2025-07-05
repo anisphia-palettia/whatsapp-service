@@ -35,7 +35,8 @@ export function WhatsappConnectionEvent(socket: WASocket) {
 
         let data = mapBaileysMessageToWhatsappMessage(message, sessionId);
 
-        const mediaKey = mediaTypes.find((type) => type in message.message!);
+        const keys = Object.keys(message.message || {});
+        const mediaKey = mediaTypes.find((type) => keys.includes(type));
         if (mediaKey) {
             const mediaPath = await saveMediaFromMessage(message, sessionId);
             if (mediaPath) {
@@ -65,9 +66,9 @@ export function WhatsappConnectionEvent(socket: WASocket) {
             await WhatsappMessageService.createOrUpdate(data);
             logger.info(`[${sessionId}] Message ${data.messageId} saved.`);
             const session = await WhatsappSessionService.findById(sessionId);
-            if (session?.callbackUrl) {
-                await handleIncomingMessage(data, sessionId, message);
-            }
+            console.log(session?.callbackUrl)
+            await handleIncomingMessage(data, sessionId, message);
+
         } else {
             logger.debug(`[${sessionId}] Stub-only message. Message data not persisted.`);
         }

@@ -31,7 +31,6 @@ export async function handleIncomingMessage(data: IWhatsappMessageCreate, sessio
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(payload),
     }).then(async (res) => {
-        console.log(res)
         logger.info(`[${sessionId}] Webhook sent. Status: ${res.status}`);
     }).catch((err) => {
         console.log(err);
