@@ -1,4 +1,4 @@
-import {SessionStatus} from "@generated/index";
+import {SessionStatus} from "@generated/prisma";
 
 export interface IWhatsappGroupInfo {
     id: string;
