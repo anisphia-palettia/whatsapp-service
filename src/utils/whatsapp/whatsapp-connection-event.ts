@@ -63,12 +63,15 @@ export function WhatsappConnectionEvent(socket: WASocket) {
     }
 
     const chat = await WhatsappChatService.findByChatId(data.chatId);
-    if (chat?.name === "New Group") {
+
+    if (chat?.name === "New Group" || chat?.name?.includes(" ")) {
       try {
         const groupMetadata = await socket.groupMetadata(data.chatId);
-        const actualGroupName = groupMetadata?.subject;
+        let actualGroupName = groupMetadata?.subject;
 
         if (actualGroupName) {
+          actualGroupName = actualGroupName.replace(/\s+/g, "_");
+
           await WhatsappChatService.createOrUpdate(
             {
               sessionId,
@@ -78,8 +81,9 @@ export function WhatsappConnectionEvent(socket: WASocket) {
             },
             data.chatId
           );
+
           logger.info(
-            `[${sessionId}] Updated group name from "New Group" to "${actualGroupName}" for ${data.chatId}`
+            `[${sessionId}] Updated group name to "${actualGroupName}" for ${data.chatId}`
           );
         }
       } catch (err) {
@@ -89,6 +93,7 @@ export function WhatsappConnectionEvent(socket: WASocket) {
         );
       }
     }
+
     if (!chat) {
       const isGroup = data.chatId.endsWith("@g.us");
       const groupName = message.messageStubParameters?.[0] ?? "New Group";

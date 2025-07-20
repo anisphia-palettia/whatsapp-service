@@ -13,10 +13,7 @@ c_byGroupHandler.get("",
         const groups = chats.filter(chat => chat.isGroup);
         return sendSuccess(c, {
             message: `Success get chats by group client : ${sessionId}`,
-            data: {
-                sessionId: sessionId,
-                groups: groups
-            }
+            data: groups
         })
     }
 )

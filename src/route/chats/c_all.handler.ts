@@ -12,10 +12,7 @@ c_allHandler.get("",
         const chats = await WhatsappSocketChat(sessionId).all()
         return sendSuccess(c, {
             message: `Success get all chats client : ${sessionId}`,
-            data: {
-                sessionId: sessionId,
-                chats: chats
-            }
+            data: chats
         })
     })
 
